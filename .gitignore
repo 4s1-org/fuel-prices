@@ -1,0 +1,4 @@
+/.env
+/fuel-prices
+/fuel-prices_*
+/config.json

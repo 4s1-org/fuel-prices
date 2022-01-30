@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "[go]": {
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": false
+      }
+    },
+    "go.formatTool": "gofmt",
+    "window.title": "Fuel Prices",
+    "cSpell.words": ["tankerkoenig"]
+  }
+}
