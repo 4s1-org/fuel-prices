@@ -1,0 +1,6 @@
+include:
+  - project: 4s1/gitlab-ci-config
+    file: 'sonar/.gitlab-ci.yml'
+
+stages:
+  - sonar
