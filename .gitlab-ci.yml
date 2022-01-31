@@ -1,5 +1,7 @@
 include:
   - project: 4s1/gitlab-ci-config
+    file: 'all/.gitlab-ci.yml'
+  - project: 4s1/gitlab-ci-config
     file: 'sonar-golang/.gitlab-ci.yml'
 
 stages:
