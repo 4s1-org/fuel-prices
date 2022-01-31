@@ -22,22 +22,55 @@ type Configuration struct {
 
 func main() {
 	fmt.Println("--- Fuel Prices ---")
+	configFileName := "config.json"
 
 	useInit := flag.Bool("init", false, "Initalize configuration file")
 	flag.Parse()
 
 	if *useInit {
-		err := createNewConfigurationFile()
+		err := createNewConfigurationFile(configFileName)
 		if err != nil {
 			fmt.Println(err)
 		}
+		return
+	}
+
+	config, err := loadConfigurationFile(configFileName)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < len(config.Stations); i++ {
+		fmt.Println("Id:   ", config.Stations[i].Id)
+		fmt.Println("City: ", config.Stations[i].City)
 	}
 }
 
-// Erzeut eine neue Konfigurationdatei mit Dummy-Daten.
-func createNewConfigurationFile() error {
-	configFileName := "config.json"
+func loadConfigurationFile(configFileName string) (*Configuration, error) {
+	_, err := os.Stat(configFileName)
+	if errors.Is(err, os.ErrNotExist) {
+		// Datei existiert nicht
+		return nil, errors.New("No configuration file found")
+	}
+	if err != nil {
+		panic(err)
+	}
 
+	file, err := ioutil.ReadFile(configFileName)
+	if err != nil {
+		panic(err)
+	}
+	configuration := Configuration{}
+	err = json.Unmarshal([]byte(file), &configuration)
+	if err != nil {
+		panic(err)
+	}
+
+	return &configuration, nil
+}
+
+// Erzeut eine neue Konfigurationdatei mit Dummy-Daten.
+func createNewConfigurationFile(configFileName string) error {
 	_, err := os.Stat(configFileName)
 	if err == nil {
 		// Datei existiert
