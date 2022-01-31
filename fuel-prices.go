@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"gitlab.com/4s1/fuel-prices/git"
 )
 
 type Station struct {
@@ -17,16 +19,20 @@ type Station struct {
 }
 
 type Configuration struct {
-	Stations []Station `json:"stations"`
+	Stations               []Station `json:"stations"`
+	TankerkoenigDataFolder string    `json:"tankerkoenigDataFolder"`
+	CsvDataFolder          string    `json:"csvDataFolder"`
 }
 
 func main() {
 	fmt.Println("--- Fuel Prices ---")
 	configFileName := "config.json"
 
-	useInit := flag.Bool("init", false, "Initalize configuration file")
+	// Program parameters
+	useInit := flag.Bool("init", false, "Initialize configuration file")
 	flag.Parse()
 
+	// Handle parameters
 	if *useInit {
 		err := createNewConfigurationFile(configFileName)
 		if err != nil {
@@ -35,21 +41,26 @@ func main() {
 		return
 	}
 
+	// Load configuration
 	config, err := loadConfigurationFile(configFileName)
 	if err != nil {
 		panic(err)
 	}
 
-	for i := 0; i < len(config.Stations); i++ {
-		fmt.Println("Id:   ", config.Stations[i].Id)
-		fmt.Println("City: ", config.Stations[i].City)
+	// Clone or update repo
+	// ToDo: Handle other err
+	if _, err := os.Stat(config.TankerkoenigDataFolder); os.IsNotExist(err) {
+		repoPath := "https://tankerkoenig@dev.azure.com/tankerkoenig/tankerkoenig-data/_git/tankerkoenig-data"
+		git.Clone(config.TankerkoenigDataFolder, repoPath)
+	} else {
+		git.Pull(config.TankerkoenigDataFolder)
 	}
 }
 
 func loadConfigurationFile(configFileName string) (*Configuration, error) {
 	_, err := os.Stat(configFileName)
 	if errors.Is(err, os.ErrNotExist) {
-		// Datei existiert nicht
+		// Config doesn't exists
 		return nil, errors.New("No configuration file found")
 	}
 	if err != nil {
@@ -73,7 +84,7 @@ func loadConfigurationFile(configFileName string) (*Configuration, error) {
 func createNewConfigurationFile(configFileName string) error {
 	_, err := os.Stat(configFileName)
 	if err == nil {
-		// Datei existiert
+		// Config exists
 		return errors.New("Configuration already exists")
 	}
 	if errors.Is(err, os.ErrNotExist) {
