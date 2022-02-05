@@ -13,7 +13,7 @@ vet: fmt
 .PHONY:vet
 
 build: vet
-	go build fuel-prices.go
+	go build .
 .PHONY:build
 
 build_arm_7:
