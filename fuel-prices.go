@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"gitlab.com/4s1/fuel-prices/conf"
+	"gitlab.com/4s1/fuel-prices/directory"
 	"gitlab.com/4s1/fuel-prices/git"
 )
 
@@ -40,4 +41,9 @@ func main() {
 	} else {
 		git.Pull(config.TankerkoenigDataFolder)
 	}
+
+	// Get input data date range
+	firstSrcFile, lastSrcFile := directory.FirstAndLastDate(config.TankerkoenigDataFolder + "/" + "prices")
+	fmt.Println(firstSrcFile)
+	fmt.Println(lastSrcFile)
 }
