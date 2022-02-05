@@ -6,13 +6,13 @@ Lädt die aktuellen Kraftstoffpreise von [Tankerkönig](https://www.tankerkoenig
 
 ```bash
 # Bauen
-go build fuel-prices.go
+make
 
 # Konfiguration erzeugen
-./fuel-prices --init
+go run . --init
 
 # config.json ausfüllen
 
 # Anwendung erneut starten
-./fuel-prices
+go run .
 ```
