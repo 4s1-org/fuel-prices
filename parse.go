@@ -12,10 +12,10 @@ import (
 )
 
 func Parse(start, end time.Time, c *Configuration) {
-	loopOverFiles(start.AddDate(0, 0, 1), end, c)
+	loopOverFiles(start, end, c)
 }
 
-func loopOverFiles(start time.Time, end time.Time, c *Configuration) {
+func loopOverFiles(start, end time.Time, c *Configuration) {
 	numJobs := int(end.Sub(start).Hours() / 24)
 	if numJobs <= 0 {
 		return

@@ -57,6 +57,8 @@ func main() {
 	start := lastDestFile
 	if firstDestFile.Before(firstSrcFile) {
 		start = firstSrcFile
+	} else {
+		start = start.AddDate(0, 0, 1)
 	}
 	end := lastSrcFile
 
