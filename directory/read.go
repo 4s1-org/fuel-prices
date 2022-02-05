@@ -9,11 +9,21 @@ import (
 	"time"
 )
 
-func FirstAndLastDate(folder string) (time.Time, time.Time) {
+func FirstAndLastDate(folder string) (time.Time, time.Time, error) {
+	_, err := ioutil.ReadDir(folder)
+	if err != nil {
+		return time.Now(), time.Now(), err
+	}
+
 	// Year
 	minYear, maxYear, err := minAndMaxFoldername(folder)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if minYear == 9999 || maxYear == 0 {
+		return time.Date(1970, time.Month(1), 1, 0, 0, 0, 0, time.UTC),
+			time.Date(2035, time.Month(12), 31, 0, 0, 0, 0, time.UTC),
+			nil
 	}
 
 	// Month
@@ -25,7 +35,9 @@ func FirstAndLastDate(folder string) (time.Time, time.Time) {
 	_, maxDay, err := minAndMaxFilename(folder + "/" + fmt.Sprintf("%04d", maxYear) + "/" + fmt.Sprintf("%02d", maxMonth))
 
 	// Return
-	return time.Date(minYear, time.Month(minMonth), minDay, 0, 0, 0, 0, time.UTC), time.Date(maxYear, time.Month(maxMonth), maxDay, 0, 0, 0, 0, time.UTC)
+	return time.Date(minYear, time.Month(minMonth), minDay, 0, 0, 0, 0, time.UTC),
+		time.Date(maxYear, time.Month(maxMonth), maxDay, 0, 0, 0, 0, time.UTC),
+		nil
 }
 
 func minAndMaxFoldername(folder string) (int, int, error) {
@@ -46,6 +58,9 @@ func minAndMaxFoldername(folder string) (int, int, error) {
 		}
 
 		foldername := item.Name()
+		if foldername == ".git" {
+			continue
+		}
 
 		i, err := strconv.Atoi(foldername)
 		if err != nil {

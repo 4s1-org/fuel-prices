@@ -43,7 +43,18 @@ func main() {
 	}
 
 	// Get input data date range
-	firstSrcFile, lastSrcFile := directory.FirstAndLastDate(config.TankerkoenigDataFolder + "/" + "prices")
+	firstSrcFile, lastSrcFile, err := directory.FirstAndLastDate(config.TankerkoenigDataFolder + "/" + "prices")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(firstSrcFile)
 	fmt.Println(lastSrcFile)
+
+	// Get parsed data date range
+	firstDestFile, lastDestFile, err := directory.FirstAndLastDate(config.CsvDataFolder)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(firstDestFile)
+	fmt.Println(lastDestFile)
 }
