@@ -1,8 +1,8 @@
 include:
   - project: 4s1/gitlab-ci-config
-    file: 'all/.gitlab-ci.yml'
+    file: 'all/prevent-detached-pipeline/.gitlab-ci.yml'
   - project: 4s1/gitlab-ci-config
-    file: 'sonar-golang/.gitlab-ci.yml'
+    file: 'golang/sonarlint/.gitlab-ci.yml'
 
 stages:
   - sonar
