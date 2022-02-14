@@ -5,4 +5,4 @@ include:
     file: 'golang/sonarlint/.gitlab-ci.yml'
 
 stages:
-  - sonar
+  - sonarlint
