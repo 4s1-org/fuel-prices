@@ -1,6 +1,7 @@
 [![Pipeline](https://gitlab.com/4s1/fuel-prices/badges/main/pipeline.svg)](https://gitlab.com/4s1/fuel-prices/pipelines)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fuel-prices&metric=bugs)](https://sonarcloud.io/summary/overall?id=fuel-prices)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=fuel-prices&metric=code_smells)](https://sonarcloud.io/summary/overall?id=fuel-prices)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=4s1_fuel-prices&metric=bugs)](https://sonarcloud.io/project/issues?id=4s1_fuel-prices&resolved=false&types=BUG)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=4s1_fuel-prices&metric=vulnerabilities)](https://sonarcloud.io/project/issues?id=4s1_fuel-prices&resolved=false&types=VULNERABILITY)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=4s1_fuel-prices&metric=code_smells)](https://sonarcloud.io/project/issues?id=4s1_fuel-prices&resolved=false&types=CODE_SMELL)
 
 # Fuel Prices
 
