@@ -2,7 +2,14 @@ include:
   - project: 4s1/gitlab-ci-config
     file: 'all/prevent-detached-pipeline/.gitlab-ci.yml'
   - project: 4s1/gitlab-ci-config
+    file: 'golang/validate/.gitlab-ci.yml'
+  - project: 4s1/gitlab-ci-config
     file: 'golang/sonarlint/.gitlab-ci.yml'
 
 stages:
+  - validate
   - sonarlint
+
+validate:
+  variables:
+    REPO_NAME: https://gitlab.com/4s1/fuel-prices
