@@ -13,9 +13,9 @@ vet: fmt
 .PHONY:vet
 
 build: vet
-	go build .
+	go build ./...
 .PHONY:build
 
 build_arm_7:
-	env GOOS=linux GOARCH=arm GOARM=7 go build -o fuel-prices_arm-v7 fuel-prices.go
+	env GOOS=linux GOARCH=arm GOARM=7 go build -o fuel-prices_arm-v7 ./...
 .PHONY:build_arm_7
