@@ -136,13 +136,16 @@ func parseLine(csvWriter *csv.Writer, row []string, details []string) {
 	// 0=keine Änderung, 1=Änderung, 2=Entfernt, 3=Neu
 	// ToDo -1 und 2 beachten
 
-	if dieselchange == "1" {
+	// Hint: Manchmal ist bei einer Änderung (1) der Preis -0.001.
+	// Keine Ahnung warum, aber die Preise werden ignoriert.
+
+	if dieselchange == "1" && diesel[0] != '-' {
 		csvWriter.Write(append(details, "Diesel", diesel))
 	}
-	if e5change == "1" {
+	if e5change == "1" && e5[0] != '-' {
 		csvWriter.Write(append(details, "E5", e5))
 	}
-	if e10change == "1" {
+	if e10change == "1" && e10[0] != '-' {
 		csvWriter.Write(append(details, "E10", e10))
 	}
 }
