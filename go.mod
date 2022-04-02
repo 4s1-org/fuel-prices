@@ -1,3 +1,3 @@
-module gitlab.com/4s1/fuel-prices
+module github.com/4s1-org/fuel-prices
 
 go 1.17

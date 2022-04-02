@@ -2,7 +2,7 @@
 
 ```bash
 # Projekt initalisieren
-go mod init gitlab.com/4s1/fuel-prices
+go mod init github.com/4s1-org/fuel-prices
 
 # Starten
 go run fuel-prices.go
