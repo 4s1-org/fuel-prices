@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -52,7 +55,8 @@ func parseFile(date time.Time, c *Configuration) {
 	month := fmt.Sprintf("%02d", date.Month())
 	day := fmt.Sprintf("%02d", date.Day())
 
-	fmt.Println(fmt.Sprintf("%s-%s-%s", year, month, day))
+	fmt.Printf("%s-%s-%s", year, month, day)
+	fmt.Println()
 
 	srcPath := filepath.Join(c.TankerkoenigDataFolder, "prices", year, month)
 	srcFilename := fmt.Sprintf("%s-%s-%s-prices.csv", year, month, day)
@@ -65,7 +69,9 @@ func parseFile(date time.Time, c *Configuration) {
 
 	destPath := filepath.Join(c.CsvDataFolder, year, month)
 	destFilename := fmt.Sprintf("%s-%s-%s.csv", year, month, day)
+	destFilenameInfluxDb := fmt.Sprintf("%s-%s-%s-influxdb.txt", year, month, day)
 	destFile2 := filepath.Join(destPath, destFilename)
+	destFile2InfluxDb := filepath.Join(destPath, destFilenameInfluxDb)
 
 	srcFile, err := os.Open(srcFile2)
 	if err != nil {
@@ -84,9 +90,17 @@ func parseFile(date time.Time, c *Configuration) {
 	}
 	defer destFile.Close()
 
+	destFileInfluxDb, err := os.Create(destFile2InfluxDb)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer destFileInfluxDb.Close()
+
 	csvReader := csv.NewReader(srcFile)
 	csvWriter := csv.NewWriter(destFile)
 	defer csvWriter.Flush()
+	txtWriter := bufio.NewWriter(destFileInfluxDb)
+	defer txtWriter.Flush()
 	firstRow := true
 
 	for {
@@ -110,14 +124,14 @@ func parseFile(date time.Time, c *Configuration) {
 			log.Fatal(err)
 		}
 		timestampString := timestampParsed.Format(time.RFC3339)
+		timestampUnix := timestampParsed.UTC().Unix()
 		uuid := row[1]
 
 		// ToDo: Das geht besser in Go
 		for i := 0; i < len(c.Stations); i++ {
 			station := c.Stations[i]
 			if uuid == station.Id {
-				details := []string{timestampString, station.Brand, station.City, station.Street}
-				parseLine(csvWriter, row, details)
+				parseLine(csvWriter, txtWriter, row, timestampString, timestampUnix, station)
 			}
 		}
 	}
@@ -125,13 +139,15 @@ func parseFile(date time.Time, c *Configuration) {
 	// ToDo: Add Brennpaste
 }
 
-func parseLine(csvWriter *csv.Writer, row []string, details []string) {
+func parseLine(csvWriter *csv.Writer, txtWriter *bufio.Writer, row []string, timestampString string, timestampUnix int64, station Station) {
 	diesel := row[2]
 	e5 := row[3]
 	e10 := row[4]
 	dieselchange := row[5]
 	e5change := row[6]
 	e10change := row[7]
+
+	details := []string{timestampString, station.Brand, station.City, station.Street}
 
 	// 0=keine Änderung, 1=Änderung, 2=Entfernt, 3=Neu
 	// ToDo -1 und 2 beachten
@@ -141,11 +157,20 @@ func parseLine(csvWriter *csv.Writer, row []string, details []string) {
 
 	if dieselchange == "1" && diesel[0] != '-' {
 		csvWriter.Write(append(details, "Diesel", diesel))
+		// ToDo Das geht besser
+		txtWriter.WriteString("kraftstoffpreise,marke=" + strings.Replace(station.Brand, " ", "\\ ", -1) + ",ort=" + strings.Replace(station.City, " ", "\\ ", -1) + ",strasse=" + strings.Replace(station.Street, " ", "\\ ", -1) + ",")
+		txtWriter.WriteString("sorte=Diesel preis=" + diesel + " " + strconv.FormatInt(timestampUnix, 10) + "\n")
 	}
 	if e5change == "1" && e5[0] != '-' {
 		csvWriter.Write(append(details, "E5", e5))
+		// ToDo Das geht besser
+		txtWriter.WriteString("kraftstoffpreise,marke=" + strings.Replace(station.Brand, " ", "\\ ", -1) + ",ort=" + strings.Replace(station.City, " ", "\\ ", -1) + ",strasse=" + strings.Replace(station.Street, " ", "\\ ", -1) + ",")
+		txtWriter.WriteString("sorte=E5 preis=" + e5 + " " + strconv.FormatInt(timestampUnix, 10) + "\n")
 	}
 	if e10change == "1" && e10[0] != '-' {
 		csvWriter.Write(append(details, "E10", e10))
+		// ToDo Das geht besser
+		txtWriter.WriteString("kraftstoffpreise,marke=" + strings.Replace(station.Brand, " ", "\\ ", -1) + ",ort=" + strings.Replace(station.City, " ", "\\ ", -1) + ",strasse=" + strings.Replace(station.Street, " ", "\\ ", -1) + ",")
+		txtWriter.WriteString("sorte=E10 preis=" + e10 + " " + strconv.FormatInt(timestampUnix, 10) + "\n")
 	}
 }
